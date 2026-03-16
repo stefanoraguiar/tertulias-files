@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comunidade Amory Porto</title>
     <style>
-        /* Color Palette & Base Styles */
+        /* Paleta de Cores & Estilos Base */
         :root {
             --bg-color: #f7f5f0; 
             --primary-blue: #2c2a54; 
@@ -37,6 +37,7 @@
             padding: 0 20px;
         }
 
+        /* Navegação */
         header {
             display: flex;
             justify-content: space-between;
@@ -45,7 +46,12 @@
             border-bottom: 3px solid var(--primary-blue);
         }
 
-        .logo { font-size: 24px; font-weight: 900; color: var(--primary-blue); letter-spacing: -1px; }
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--primary-blue);
+            letter-spacing: -1px;
+        }
 
         nav a {
             text-decoration: none;
@@ -55,15 +61,43 @@
             transition: color 0.2s;
         }
 
-        nav a:hover { color: var(--accent-pink); }
+        nav a:hover {
+            color: var(--accent-pink);
+        }
 
-        .hero { text-align: center; padding: 60px 20px; background: linear-gradient(135deg, rgba(216,58,124,0.1) 0%, rgba(79,164,209,0.1) 100%); }
-        .hero h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 10px; color: var(--primary-blue); }
+        /* Secção Hero */
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, rgba(216,58,124,0.1) 0%, rgba(79,164,209,0.1) 100%);
+        }
 
-        .events-section { margin: -30px auto 60px auto; position: relative; z-index: 10; }
-        .events-section h2 { text-align: center; margin-bottom: 30px; font-size: 2.5rem; text-shadow: 2px 2px 0px white; }
+        .hero h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 10px;
+            color: var(--primary-blue);
+        }
 
-        .events-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        /* Grelha de Eventos */
+        .events-section {
+            margin: -30px auto 60px auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .events-section h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 0px white;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
 
         .event-card {
             background-color: white;
@@ -79,9 +113,17 @@
 
         .event-card:hover { transform: translateY(-5px); }
 
-        .event-meta { font-weight: bold; color: var(--accent-pink); font-size: 0.95rem; margin-bottom: 10px; display: block; }
-        .event-card h3 { font-size: 1.5rem; margin-top: 0; line-height: 1.2; }
-        .event-location { font-size: 0.9rem; color: #555; margin-bottom: 20px; }
+        /* Cores alternadas para as sombras das boxes */
+        .event-card:nth-child(2n) { box-shadow: 6px 6px 0px var(--accent-pink); }
+        .event-card:nth-child(3n) { box-shadow: 6px 6px 0px var(--accent-light-blue); }
+
+        .event-meta {
+            font-weight: bold;
+            color: var(--accent-pink);
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            display: block;
+        }
 
         .btn {
             background-color: var(--accent-pink);
@@ -93,19 +135,43 @@
             border-radius: 50px;
             display: inline-block;
             text-align: center;
+            transition: 0.2s;
         }
 
-        .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; margin-bottom: 80px; }
-        .card { background: white; padding: 20px; border-radius: 8px; border-left: 6px solid var(--accent-light-blue); margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .btn:hover { background-color: var(--primary-blue); }
+
+        /* Conteúdo: Artigos e Biblioteca */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 6px solid var(--accent-light-blue);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
 
         .library-list { list-style: none; padding: 0; }
         .library-list li { padding: 15px 0; border-bottom: 2px dashed #ddd; font-weight: bold; }
         .library-list li a { text-decoration: none; color: var(--primary-blue); }
 
-        footer { background-color: var(--primary-blue); color: white; text-align: center; padding: 40px 20px; }
+        footer {
+            background-color: var(--primary-blue);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 40px;
+        }
 
+        /* Responsividade */
         @media (max-width: 900px) { .events-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 768px) { .content-grid, .events-grid { grid-template-columns: 1fr; } nav { display: none; } }
+        @media (max-width: 768px) { .content-grid, .events-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -114,9 +180,9 @@
         <header>
             <div class="logo">Amory Porto</div>
             <nav>
-                <a href="#">Início</a>
-                <a href="#">Eventos</a>
-                <a href="#">Artigos</a>
+                <a href="index.html">Início</a>
+                <a href="#eventos">Eventos</a>
+                <a href="#artigos">Artigos</a>
                 <a href="#">Biblioteca</a>
             </nav>
         </header>
@@ -130,7 +196,7 @@
     </section>
 
     <div class="container">
-        <div class="events-section">
+        <div class="events-section" id="eventos">
             <h2>Próximos Eventos</h2>
             <div class="events-grid" id="dynamic-events">
                 <p>A carregar eventos...</p>
@@ -138,7 +204,7 @@
         </div>
 
         <div class="content-grid">
-            <div class="articles">
+            <div class="articles" id="artigos">
                 <h2>Últimos Artigos</h2>
                 <div id="dynamic-articles">
                     <p>A carregar artigos...</p>
@@ -164,34 +230,25 @@
     </footer>
 
     <script>
-        // --- CONFIGURATION ---
-        const PROJECT_ID = "zhr2ddpl"; 
+        const PROJECT_ID = "39kiu3jl"; 
         const DATASET = "production";
         
-        console.log("DEBUG: Iniciar carregamento de dados Sanity...");
-
+        // Query para buscar os dados incluindo o campo slug
         const QUERY = encodeURIComponent(`{
-            "articles": *[_type == "article"] | order(publishedAt desc)[0...3],
-            "events": *[_type == "event"] | order(date asc)[0...3]
+            "articles": *[_type == "article"] | order(publishedAt desc)[0...3]{title, author, publishedAt, slug},
+            "events": *[_type == "event"] | order(date asc)[0...3]{title, date, locationName, slug}
         }`);
 
         const URL = `https://${PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/${DATASET}?query=${QUERY}`;
 
         const formatDate = (dateString) => {
-            if(!dateString) return "Sem data";
             return new Date(dateString).toLocaleDateString('pt-PT', { day: 'numeric', month: 'long' });
         };
 
-        // --- FETCH DATA ---
         fetch(URL)
-            .then(res => {
-                console.log("DEBUG: Resposta recebida da API status:", res.status);
-                return res.json();
-            })
+            .then(res => res.json())
             .then(({ result }) => {
-                console.log("DEBUG: Dados recebidos com sucesso:", result);
-
-                // 1. RENDER EVENTS
+                // 1. RENDERIZAR EVENTOS
                 const eventGrid = document.getElementById('dynamic-events');
                 eventGrid.innerHTML = '';
                 
@@ -199,22 +256,24 @@
                     result.events.forEach(ev => {
                         const eventCard = document.createElement('div');
                         eventCard.className = 'event-card';
+                        // O link agora usa o slug dinâmico
+                        const detailLink = ev.slug ? `evento.html?id=${ev.slug.current}` : '#';
+                        
                         eventCard.innerHTML = `
                             <div>
                                 <span class="event-meta">★ ${formatDate(ev.date)}</span>
                                 <h3>${ev.title}</h3>
                                 <p class="event-location">📍 ${ev.locationName || 'Porto'}</p>
                             </div>
-                            <a href="#" class="btn">Saber Mais</a>
+                            <a href="${detailLink}" class="btn">Saber Mais</a>
                         `;
                         eventGrid.appendChild(eventCard);
                     });
                 } else {
-                    console.log("DEBUG: Nenhum evento encontrado.");
-                    eventGrid.innerHTML = "<p>Não há eventos agendados de momento.</p>";
+                    eventGrid.innerHTML = "<p>Sem eventos agendados.</p>";
                 }
 
-                // 2. RENDER ARTICLES
+                // 2. RENDERIZAR ARTIGOS
                 const articleContainer = document.getElementById('dynamic-articles');
                 articleContainer.innerHTML = '';
 
@@ -222,22 +281,20 @@
                     result.articles.forEach(art => {
                         const card = document.createElement('div');
                         card.className = 'card';
+                        const detailLink = art.slug ? `artigo.html?id=${art.slug.current}` : '#';
+
                         card.innerHTML = `
                             <h3>${art.title}</h3>
                             <p>Publicado por ${art.author || 'Equipa Amory'}</p>
-                            <a href="#" style="color: var(--accent-pink); font-weight: bold;">Ler artigo →</a>
+                            <a href="${detailLink}" style="color: var(--accent-pink); font-weight: bold;">Ler artigo →</a>
                         `;
                         articleContainer.appendChild(card);
                     });
                 } else {
-                    console.log("DEBUG: Nenhum artigo encontrado.");
-                    articleContainer.innerHTML = "<p>Ainda não foram publicados artigos.</p>";
+                    articleContainer.innerHTML = "<p>Ainda não há artigos publicados.</p>";
                 }
             })
-            .catch(err => {
-                console.error("DEBUG: ERRO CRÍTICO NA FETCH:", err);
-                document.getElementById('dynamic-events').innerHTML = `<p style="color:red">Erro: ${err.message}</p>`;
-            });
+            .catch(err => console.error("Erro:", err));
     </script>
 </body>
 </html>
