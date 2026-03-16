@@ -2,6 +2,7 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artigo | Tertúlias Não-Monogâmicas do Porto</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -18,7 +19,7 @@
         const slug = urlParams.get('id');
         const PROJECT_ID = "zhr2ddpl";
 
-        const QUERY = encodeURIComponent(`*[_type == "article" && slug.current == "${slug}"][0]`);
+        const QUERY = encodeURIComponent(`*[_type == "article" && slug.current == "${slug}"][0]{..., "imageUrl": mainImage.asset->url}`);
         const URL = `https://${PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/production?query=${QUERY}`;
 
         // PORTABLE TEXT TRANSLATOR: Turns Sanity blocks into HTML
@@ -36,8 +37,16 @@
                 const container = document.getElementById('article-data');
                 if (result) {
                     document.title = `${result.title} | Tertúlias Não-Monogâmicas do Porto`;
+                    // 2. Renderizar o conteúdo
                     const date = new Date(result.publishedAt).toLocaleDateString('pt-PT');
+                    
+                    // Verifica se a imagem existe antes de a tentar mostrar
+                    const imageHTML = result.imageUrl 
+                        ? `<img src="${result.imageUrl}" alt="Capa do artigo ${result.title}" class="article-cover">` 
+                        : '';
+
                     container.innerHTML = `
+                        ${imageHTML}
                         <h1>${result.title}</h1>
                         <p class="author-meta">Por ${result.author} em ${date}</p>
                         <div class="body-text">${blocksToHtml(result.content)}</div>
