@@ -2,22 +2,12 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
-    <title>Artigo | Amory Porto</title>
-    <style>
-        :root { --bg-color: #f7f5f0; --primary-blue: #2c2a54; --accent-pink: #d83a7c; --accent-light-blue: #4fa4d1; }
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; }
-        .container { max-width: 800px; margin: 60px auto; padding: 0 20px; }
-        .article-content { background: white; padding: 50px; border: 3px solid var(--primary-blue); box-shadow: 10px 10px 0px var(--accent-light-blue); border-radius: 15px; }
-        h1 { font-family: 'Arial Black', sans-serif; color: var(--primary-blue); font-size: 2.5rem; line-height: 1.1; }
-        .author-meta { font-style: italic; color: #666; margin-bottom: 30px; }
-        /* Style for the translated text */
-        .body-text p { margin-bottom: 20px; font-size: 1.15rem; line-height: 1.8; }
-        .btn-back { display: inline-block; margin-bottom: 20px; text-decoration: none; font-weight: bold; color: var(--accent-pink); }
-    </style>
+    <title>Artigo | Tertúlias Não-Monogâmicas do Porto</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <a href="tertulias.html" class="btn-back">← Voltar ao Início</a>
+    <div class="article-page-container">
+        <a href="javascript:history.back()" class="btn-back">← Voltar</a>         
         <article class="article-content" id="article-data">
             <p>A carregar artigo...</p>
         </article>
@@ -26,7 +16,7 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const slug = urlParams.get('id');
-        const PROJECT_ID = "39kiu3jl";
+        const PROJECT_ID = "zhr2ddpl";
 
         const QUERY = encodeURIComponent(`*[_type == "article" && slug.current == "${slug}"][0]`);
         const URL = `https://${PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/production?query=${QUERY}`;
@@ -45,6 +35,7 @@
             .then(({ result }) => {
                 const container = document.getElementById('article-data');
                 if (result) {
+                    document.title = `${result.title} | Tertúlias Não-Monogâmicas do Porto`;
                     const date = new Date(result.publishedAt).toLocaleDateString('pt-PT');
                     container.innerHTML = `
                         <h1>${result.title}</h1>

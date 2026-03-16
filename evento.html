@@ -3,31 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evento | Amory Porto</title>
-    <style>
-        /* [Reusing your CSS variables and base styles] */
-        :root { --bg-color: #f7f5f0; --primary-blue: #2c2a54; --accent-pink: #d83a7c; --accent-yellow: #eab13b; --text-dark: #1a1a1a; }
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-color); color: var(--text-dark); margin: 0; line-height: 1.6; }
-        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
-        h1 { font-family: 'Arial Black', sans-serif; text-transform: uppercase; color: var(--primary-blue); font-size: 3rem; }
-        .event-box { background: white; border: 4px solid var(--primary-blue); padding: 40px; box-shadow: 10px 10px 0px var(--accent-yellow); border-radius: 12px; }
-        .meta-info { font-weight: bold; font-size: 1.2rem; color: var(--accent-pink); margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .description { font-size: 1.1rem; margin-top: 30px; white-space: pre-wrap; }
-        .btn-back { display: inline-block; margin-top: 40px; text-decoration: none; font-weight: bold; color: var(--primary-blue); border-bottom: 3px solid var(--accent-pink); }
-    </style>
+    <title>Evento | Tertúlias Não-Monogâmicas do Porto</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
+    <div class="event-page-container">
+        <a href="javascript:history.back()" class="btn-back">← Voltar</a>
         <div class="event-box" id="event-details">
             <p>A carregar detalhes do evento...</p>
         </div>
-        <a href="tertulias.html" class="btn-back">← Voltar à página inicial</a>
     </div>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const slug = urlParams.get('id');
-        const PROJECT_ID = "39kiu3jl";
+        const PROJECT_ID = "zhr2ddpl";
 
         const QUERY = encodeURIComponent(`*[_type == "event" && slug.current == "${slug}"][0]`);
         const URL = `https://${PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/production?query=${QUERY}`;
@@ -35,6 +25,7 @@
         fetch(URL)
             .then(res => res.json())
             .then(({ result }) => {
+                s
                 const container = document.getElementById('event-details');
                 if (result) {
                     const date = new Date(result.date).toLocaleString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
