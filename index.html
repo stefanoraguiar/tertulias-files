@@ -13,73 +13,120 @@
     </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <div class="logo">Amory Porto</div>
+            <nav>
+                <a href="#">Início</a>
+                <a href="#">Eventos</a>
+                <a href="#">Artigos</a>
+                <a href="#">Biblioteca</a>
+            </nav>
+        </header>
+    </div>
 
-    <h1>Community Articles</h1>
-    <div id="article-list">Loading articles...</div>
+    <section class="hero">
+        <div class="container">
+            <h1>Tertúlias &<br>Encontros</h1>
+            <p>Um espaço seguro no Porto para partilha, escuta e construção de relações baseadas na ética e no afeto.</p>
+        </div>
+    </section>
 
-    <h1>Upcoming Events</h1>
-    <div id="event-list">Loading events...</div>
+    <div class="container">
+        <div class="events-section">
+            <h2>Próximos Eventos</h2>
+            <div class="events-grid" id="dynamic-events">
+                <p>A carregar eventos...</p>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="articles">
+                <h2>Últimos Artigos</h2>
+                <div id="dynamic-articles">
+                    <p>A carregar artigos...</p>
+                </div>
+            </div>
+
+            <div class="library">
+                <h2>Biblioteca</h2>
+                <ul class="library-list">
+                    <li>📚 <a href="#">A Ética do Amor Livre (Livro)</a></li>
+                    <li>🎧 <a href="#">Podcast: Relações e Compersão</a></li>
+                    <li>📄 <a href="#">Glossário Não-Monogâmico</a></li>
+                    <li>🔗 <a href="#">Guia de Comunicação Não Violenta</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 Comunidade Amory Porto. Construído com ❤️ e Sanity.io.</p>
+        </div>
+    </footer>
 
     <script>
-        const PROJECT_ID = "zhr2ddpl"; // Your specific ID
+        const PROJECT_ID = "39kiu3jl"; // Replace with your ID if different
         const DATASET = "production";
-        
-        // This query fetches both Articles and Events in one go
         const QUERY = encodeURIComponent(`{
-            "articles": *[_type == "article"] | order(publishedAt desc),
-            "events": *[_type == "event"] | order(date asc)
+            "articles": *[_type == "article"] | order(publishedAt desc)[0...3],
+            "events": *[_type == "event"] | order(date asc)[0...3]
         }`);
 
         const URL = `https://${PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/${DATASET}?query=${QUERY}`;
 
+        // Helper function for Portuguese dates
+        const formatDate = (dateString) => {
+            const options = { day: 'numeric', month: 'long' };
+            return new Date(dateString).toLocaleDateString('pt-PT', options);
+        };
+
         fetch(URL)
-            .then((res) => res.json())
+            .then(res => res.json())
             .then(({ result }) => {
-                // --- 1. HANDLE ARTICLES ---
-                const articleContainer = document.getElementById("article-list");
-                articleContainer.innerHTML = ""; 
+                // 1. RENDER EVENTS
+                const eventGrid = document.getElementById('dynamic-events');
+                eventGrid.innerHTML = '';
+                
+                if (result.events.length > 0) {
+                    result.events.forEach(ev => {
+                        const eventCard = document.createElement('div');
+                        eventCard.className = 'event-card';
+                        eventCard.innerHTML = `
+                            <div>
+                                <span class="event-meta">★ ${formatDate(ev.date)}</span>
+                                <h3>${ev.title}</h3>
+                                <p class="event-location">📍 ${ev.locationName || 'Porto'}</p>
+                            </div>
+                            <a href="#" class="btn">Saber Mais</a>
+                        `;
+                        eventGrid.appendChild(eventCard);
+                    });
+                } else {
+                    eventGrid.innerHTML = "<p>Não há eventos agendados de momento.</p>";
+                }
+
+                // 2. RENDER ARTICLES
+                const articleContainer = document.getElementById('dynamic-articles');
+                articleContainer.innerHTML = '';
 
                 if (result.articles.length > 0) {
                     result.articles.forEach(art => {
-                        const div = document.createElement("div");
-                        div.className = "item";
-                        const date = art.publishedAt ? new Date(art.publishedAt).toLocaleDateString() : "No date";
-                        div.innerHTML = `
-                            <strong>${art.title}</strong><br>
-                            <span class="author">By ${art.author || 'Community Member'}</span> — 
-                            <span class="date">${date}</span>
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.innerHTML = `
+                            <h3>${art.title}</h3>
+                            <p>Publicado por ${art.author || 'Equipa Amory'}</p>
+                            <a href="#" style="color: var(--accent-pink); font-weight: bold;">Ler artigo →</a>
                         `;
-                        articleContainer.appendChild(div);
+                        articleContainer.appendChild(card);
                     });
                 } else {
-                    articleContainer.textContent = "No articles posted yet.";
-                }
-
-                // --- 2. HANDLE EVENTS ---
-                const eventContainer = document.getElementById("event-list");
-                eventContainer.innerHTML = "";
-
-                if (result.events.length > 0) {
-                    result.events.forEach(ev => {
-                        const div = document.createElement("div");
-                        div.className = "item";
-                        div.style.borderLeftColor = "#f53131"; // Red for events
-                        const date = ev.date ? new Date(ev.date).toLocaleString() : "TBD";
-                        div.innerHTML = `
-                            <strong>${ev.title}</strong><br>
-                            📍 ${ev.locationName || 'Location TBD'}<br>
-                            <span class="date">📅 ${date}</span>
-                        `;
-                        eventContainer.appendChild(div);
-                    });
-                } else {
-                    eventContainer.textContent = "No upcoming events.";
+                    articleContainer.innerHTML = "<p>Ainda não foram publicados artigos.</p>";
                 }
             })
-            .catch((err) => {
-                console.error(err);
-                document.body.innerHTML += `<p style="color:red">Error loading content. Check console.</p>`;
-            });
+            .catch(err => console.error("Erro ao carregar dados:", err));
     </script>
 </body>
 </html>
