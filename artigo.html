@@ -33,26 +33,16 @@
         fetch(URL)
             .then(res => res.json())
             .then(({ result }) => {
-                const container = document.getElementById('event-details');
+                const container = document.getElementById('article-data');
                 if (result) {
-                    document.title = `${result.title} | Eventos Amory Porto`;
-
-                    const date = new Date(result.date).toLocaleString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+                    document.title = `${result.title} | Tertúlias Não-Monogâmicas do Porto`;
+                    const date = new Date(result.publishedAt).toLocaleDateString('pt-PT');
                     container.innerHTML = `
-                        <div class="meta-info">★ ${date}</div>
                         <h1>${result.title}</h1>
-                        <p style="font-size: 1.3rem;">📍 <strong>Local:</strong> ${result.locationName || 'Porto'}</p>
-                        <p><strong>Morada:</strong> ${result.address || 'Ver detalhes no mapa'}</p>
-                        <div class="description">${result.description}</div>
+                        <p class="author-meta">Por ${result.author} em ${date}</p>
+                        <div class="body-text">${blocksToHtml(result.content)}</div>
                     `;
-                } else {
-                    container.innerHTML = "<h1>Evento não encontrado.</h1>";
-                    document.title = "Evento não encontrado | Amory Porto";
                 }
-            })
-            .catch(err => {
-                console.error("Erro a carregar evento:", err);
-                document.getElementById('event-details').innerHTML = "<p>Ocorreu um erro ao carregar os dados.</p>";
             });
     </script>
 </body>
