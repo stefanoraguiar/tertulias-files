@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Hub | Latest Updates</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; }
+        h1 { border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .item { background: #f9f9f9; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid #3142f5; }
+        .date { font-size: 0.9em; color: #666; }
+        .author { font-style: italic; color: #888; }
+    </style>
+</head>
+<body>
+
+    <h1>Community Articles</h1>
+    <div id="article-list">Loading articles...</div>
+
+    <h1>Upcoming Events</h1>
+    <div id="event-list">Loading events...</div>
+
+    <script>
+        const PROJECT_ID = "zhr2ddpl"; // Your specific ID
+        const DATASET = "production";
+        
+        // This query fetches both Articles and Events in one go
+        const QUERY = encodeURIComponent(`{
+            "articles": *[_type == "article"] | order(publishedAt desc),
+            "events": *[_type == "event"] | order(date asc)
+        }`);
+
+        const URL = `https://${PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/${DATASET}?query=${QUERY}`;
+
+        fetch(URL)
+            .then((res) => res.json())
+            .then(({ result }) => {
+                // --- 1. HANDLE ARTICLES ---
+                const articleContainer = document.getElementById("article-list");
+                articleContainer.innerHTML = ""; 
+
+                if (result.articles.length > 0) {
+                    result.articles.forEach(art => {
+                        const div = document.createElement("div");
+                        div.className = "item";
+                        const date = art.publishedAt ? new Date(art.publishedAt).toLocaleDateString() : "No date";
+                        div.innerHTML = `
+                            <strong>${art.title}</strong><br>
+                            <span class="author">By ${art.author || 'Community Member'}</span> — 
+                            <span class="date">${date}</span>
+                        `;
+                        articleContainer.appendChild(div);
+                    });
+                } else {
+                    articleContainer.textContent = "No articles posted yet.";
+                }
+
+                // --- 2. HANDLE EVENTS ---
+                const eventContainer = document.getElementById("event-list");
+                eventContainer.innerHTML = "";
+
+                if (result.events.length > 0) {
+                    result.events.forEach(ev => {
+                        const div = document.createElement("div");
+                        div.className = "item";
+                        div.style.borderLeftColor = "#f53131"; // Red for events
+                        const date = ev.date ? new Date(ev.date).toLocaleString() : "TBD";
+                        div.innerHTML = `
+                            <strong>${ev.title}</strong><br>
+                            📍 ${ev.locationName || 'Location TBD'}<br>
+                            <span class="date">📅 ${date}</span>
+                        `;
+                        eventContainer.appendChild(div);
+                    });
+                } else {
+                    eventContainer.textContent = "No upcoming events.";
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                document.body.innerHTML += `<p style="color:red">Error loading content. Check console.</p>`;
+            });
+    </script>
+</body>
+</html>
