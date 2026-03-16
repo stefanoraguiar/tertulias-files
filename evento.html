@@ -25,9 +25,10 @@
         fetch(URL)
             .then(res => res.json())
             .then(({ result }) => {
-                s
                 const container = document.getElementById('event-details');
                 if (result) {
+                    document.title = `${result.title} | Eventos Amory Porto`;
+
                     const date = new Date(result.date).toLocaleString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
                     container.innerHTML = `
                         <div class="meta-info">★ ${date}</div>
@@ -38,7 +39,12 @@
                     `;
                 } else {
                     container.innerHTML = "<h1>Evento não encontrado.</h1>";
+                    document.title = "Evento não encontrado | Amory Porto";
                 }
+            })
+            .catch(err => {
+                console.error("Erro a carregar evento:", err);
+                document.getElementById('event-details').innerHTML = "<p>Ocorreu um erro ao carregar os dados.</p>";
             });
     </script>
 </body>
