@@ -181,13 +181,17 @@ footer {
 .author-meta { font-style: italic; color: #666; margin-bottom: 30px; }
 .body-text p { margin-bottom: 20px; font-size: 1.15rem; line-height: 1.8; }
 .article-cover {
-    width: 100%; /* Ocupa sempre a largura total da caixa do artigo */
-    max-height: 450px; /* Não deixa a imagem ficar gigante em ecrãs grandes */
-    object-fit: cover; /* Corta a imagem de forma elegante sem a distorcer */
-    border-radius: 8px; /* Cantos arredondados a condizer com o design */
-    border: 3px solid var(--primary-blue); /* Borda para manter o teu estilo visual */
-    margin-bottom: 30px;
-    box-sizing: border-box;
+    width: 100%; 
+    max-width: 100%; /* Garante que nunca ultrapassa a largura da caixa */
+    height: auto; /* Mantém a proporção correta */
+    max-height: 450px; 
+    object-fit: cover; 
+    display: block; /* Resolve o bug do espaço extra debaixo da imagem e força-a a ficar dentro da caixa */
+    border-radius: 8px; 
+    border: 3px solid var(--primary-blue); 
+    margin-top: 20px; /* Espaço entre o autor e a imagem */
+    margin-bottom: 30px; /* Espaço entre a imagem e o texto */
+    box-sizing: border-box; /* Inclui a borda no cálculo da largura total */
 }
 
 /* --- Página de Evento --- */
