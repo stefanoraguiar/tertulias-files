@@ -66,9 +66,10 @@
         const DATASET = "production";
         
         // Query para buscar os dados incluindo o campo slug
+        // Query atualizada: filtra eventos com data superior ao momento atual
         const QUERY = encodeURIComponent(`{
             "articles": *[_type == "article"] | order(publishedAt desc)[0...3]{title, author, publishedAt, slug},
-            "events": *[_type == "event"] | order(date asc)[0...3]{title, date, locationName, slug}
+            "events": *[_type == "event" && date > now()] | order(date asc)[0...3]{title, date, locationName, slug}
         }`);
 
         const URL = `https://${PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/${DATASET}?query=${QUERY}`;
@@ -102,7 +103,15 @@
                         eventGrid.appendChild(eventCard);
                     });
                 } else {
-                    eventGrid.innerHTML = "<p>Sem eventos agendados.</p>";
+                    // Mensagem clara e amigável caso não haja eventos
+                    eventGrid.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: white; border: 3px dashed var(--primary-blue); border-radius: 12px; box-shadow: 6px 6px 0px #eee;">
+                            <h3 style="margin-bottom: 10px; font-size: 1.8rem;">Ainda a planear os próximos encontros ☕</h3>
+                            <p style="font-size: 1.1rem; color: #555;">De momento não temos eventos futuros agendados. Fica atento(a) a este espaço para novidades em breve!</p>
+                        </div>
+                    `;
+                    // Esta alteração no CSS (grid-column: 1 / -1) faz com que a caixa ocupe as 3 colunas da grelha
+                    eventGrid.style.display = "block"; 
                 }
 
                 // 2. RENDERIZAR ARTIGOS
