@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evento | Amory Porto</title>
+    <title>Evento | Tertúlias Não-Monogâmicas do Porto</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="event-page-container">
         <a href="javascript:history.back()" class="btn-back">← Voltar</a>
+        
         <div class="event-box" id="event-details">
             <p>A carregar detalhes do evento...</p>
         </div>
@@ -19,39 +20,30 @@
         const slug = urlParams.get('id');
         const PROJECT_ID = "zhr2ddpl";
 
-        // NOTA: Se o campo da imagem no teu Sanity se chamar apenas "image" ou "cartaz", 
-        // altera a parte "mainImage.asset->url" abaixo para "image.asset->url" ou "cartaz.asset->url".
+        // Query com extração da imagem
         const QUERY = encodeURIComponent(`*[_type == "event" && slug.current == "${slug}"][0]{..., "imageUrl": mainImage.asset->url}`);
         const URL = `https://${PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/production?query=${QUERY}`;
 
         fetch(URL)
             .then(res => res.json())
-            .then(data => {
+            .then(({ result }) => {
                 const container = document.getElementById('event-details');
-                const result = data.result;
-
                 if (result) {
-                    // Atualiza o título da aba
-                    document.title = `${result.title || 'Evento'} | Eventos Amory Porto`;
+                    document.title = `${result.title} | Eventos Amory Porto`;
 
-                    // Formata a data (com proteção caso o evento não tenha data)
-                    const dateStr = result.date 
-                        ? new Date(result.date).toLocaleString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) 
-                        : 'Data a anunciar';
+                    const date = new Date(result.date).toLocaleString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
                     
-                    // Prepara a imagem (se existir)
                     const imageHTML = result.imageUrl 
-                        ? `<img src="${result.imageUrl}" alt="Cartaz do evento" class="article-cover">` 
+                        ? `<img src="${result.imageUrl}" alt="Cartaz do evento ${result.title}" class="article-cover">` 
                         : '';
 
-                    // Injeta tudo no HTML
                     container.innerHTML = `
-                        <div class="meta-info">★ ${dateStr}</div>
+                        <div class="meta-info">★ ${date}</div>
                         ${imageHTML}
-                        <h1>${result.title || 'Sem título'}</h1>
+                        <h1>${result.title}</h1>
                         <p style="font-size: 1.3rem;">📍 <strong>Local:</strong> ${result.locationName || 'Porto'}</p>
                         <p><strong>Morada:</strong> ${result.address || 'Ver detalhes no mapa'}</p>
-                        <div class="description">${result.description || ''}</div>
+                        <div class="description">${result.description}</div>
                     `;
                 } else {
                     container.innerHTML = "<h1>Evento não encontrado.</h1>";
@@ -60,7 +52,7 @@
             })
             .catch(err => {
                 console.error("Erro a carregar evento:", err);
-                document.getElementById('event-details').innerHTML = "<p>Ocorreu um erro ao carregar os dados do evento. Verifique a sua ligação ou tente novamente.</p>";
+                document.getElementById('event-details').innerHTML = "<p>Ocorreu um erro ao carregar os dados.</p>";
             });
     </script>
 </body>
