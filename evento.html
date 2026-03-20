@@ -34,7 +34,7 @@
                     const date = new Date(result.date).toLocaleString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
                     
                     const imageHTML = result.imageUrl 
-                        ? `<img src="${result.imageUrl}" alt="Cartaz do evento ${result.title}" class="article-cover">` 
+                        ? `<img src="${result.imageUrl}" alt="Cartaz do evento ${result.title}" class="event-cover">` 
                         : '';
 
                     container.innerHTML = `
