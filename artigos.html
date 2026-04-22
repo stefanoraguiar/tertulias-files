@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Artigos | Amory Porto</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo">Amory Porto</div>
+            <nav>
+                <a href="index.html">Início</a>
+                <a href="index.html#eventos">Eventos</a>
+                <a href="artigos.html" style="color: var(--accent-pink);">Artigos</a>
+                <a href="#">Biblioteca</a>
+            </nav>
+        </header>
+    </div>
+
+    <div class="container" style="margin-top: 40px; margin-bottom: 80px;">
+        <a href="index.html" class="btn-back">← Voltar ao Início</a>
+        
+        <h1 style="font-size: 3rem; margin-top: 20px;">Arquivo de Artigos</h1>
+        <p style="font-size: 1.2rem; color: #555; margin-bottom: 40px;">Explore todas as reflexões, partilhas e textos da nossa comunidade.</p>
+
+        <div id="all-articles" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">
+            <p>A carregar o histórico de artigos...</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 Comunidade Amory Porto. Construído com ❤️ e Sanity.io.</p>
+        </div>
+    </footer>
+
+    <script>
+        const PROJECT_ID = "zhr2ddpl";
+        const DATASET = "production";
+        
+        // Query para buscar TODOS os artigos, ordenados por data
+        const QUERY = encodeURIComponent(`*[_type == "article"] | order(publishedAt desc){title, author, publishedAt, slug}`);
+        const URL = `https://${PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/${DATASET}?query=${QUERY}`;
+
+        fetch(URL)
+            .then(res => res.json())
+            .then(({ result }) => {
+                const container = document.getElementById('all-articles');
+                container.innerHTML = ''; // Limpa a mensagem de carregamento
+
+                if (result && result.length > 0) {
+                    result.forEach(art => {
+                        // Formatar a data
+                        const dateStr = art.publishedAt 
+                            ? new Date(art.publishedAt).toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' }) 
+                            : 'Data desconhecida';
+                        
+                        // Criar o link
+                        const detailLink = art.slug ? `artigo.html?id=${art.slug.current}` : '#';
+
+                        // Construir o card
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.style.marginBottom = '0'; // Anula a margem do CSS base para a grelha funcionar perfeitamente
+                        
+                        card.innerHTML = `
+                            <span style="font-size: 0.85rem; font-weight: bold; color: #888; text-transform: uppercase;">${dateStr}</span>
+                            <h3 style="margin-top: 10px; font-size: 1.4rem;">${art.title}</h3>
+                            <p style="margin-bottom: 15px;">Por ${art.author || 'Equipa Amory'}</p>
+                            <a href="${detailLink}" style="color: var(--accent-pink); font-weight: bold; text-decoration: none;">Ler artigo →</a>
+                        `;
+                        container.appendChild(card);
+                    });
+                } else {
+                    container.style.display = "block";
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; background: white; border: 3px dashed var(--primary-blue); border-radius: 12px;">
+                            <h3 style="font-size: 1.5rem;">Ainda sem publicações 📝</h3>
+                            <p>Os nossos textos e reflexões aparecerão aqui em breve.</p>
+                        </div>
+                    `;
+                }
+            })
+            .catch(err => {
+                console.error("Erro ao carregar o arquivo de artigos:", err);
+                document.getElementById('all-articles').innerHTML = "<p>Ocorreu um erro ao carregar os artigos.</p>";
+            });
+    </script>
+</body>
+</html>
