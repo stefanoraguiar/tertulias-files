@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terapeutas Recomendados | Amory Porto</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Estilos específicos para a página de terapeutas */
+        .search-container {
+            background: white;
+            padding: 30px;
+            border: 3px solid var(--primary-blue);
+            border-radius: 12px;
+            box-shadow: 6px 6px 0px var(--accent-light-blue);
+            margin-bottom: 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .filter-group { display: flex; flex-direction: column; gap: 8px; }
+        .filter-group label { font-weight: bold; color: var(--primary-blue); text-transform: uppercase; font-size: 0.8rem; }
+        .filter-group input, .filter-group select {
+            padding: 10px;
+            border: 2px solid var(--primary-blue);
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .alphabet-section { margin-bottom: 40px; }
+        .letter-header {
+            font-size: 2.5rem;
+            color: var(--accent-pink);
+            border-bottom: 4px solid var(--accent-pink);
+            margin-bottom: 25px;
+            font-family: 'Arial Black', sans-serif;
+        }
+
+        .therapist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .therapist-card {
+            background: white;
+            border: 3px solid var(--primary-blue);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 5px 5px 0px var(--accent-yellow);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .therapist-name { margin: 0 0 10px 0; color: var(--primary-blue); }
+        .price-tag { color: var(--accent-pink); font-weight: bold; margin-bottom: 10px; }
+        
+        .tag-list { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 15px; }
+        .tag {
+            background: var(--bg-color);
+            border: 1px solid var(--primary-blue);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .contact-links { margin-top: 15px; display: flex; gap: 15px; font-size: 0.9rem; }
+        .contact-links a { text-decoration: none; color: var(--accent-light-blue); font-weight: bold; }
+        
+        .recommenders {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-size: 0.8rem;
+            font-style: italic;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo">Tertúlias Não-Monogâmicas</div>
+            <nav>
+                <a href="index.html">Início</a>
+                <a href="artigos.html">Artigos</a>
+                <a href="terapeutas.html" style="color: var(--accent-pink);">Terapeutas</a>
+                <a href="#">Biblioteca</a>
+            </nav>
+        </header>
+    </div>
+
+    <div class="container" style="margin-top: 40px; margin-bottom: 80px;">
+        <h1>Terapeutas Validados</h1>
+        <p>Profissionais de saúde mental e terapeutas recomendados pela nossa comunidade.</p>
+
+        <div class="search-container">
+            <div class="filter-group">
+                <label>Procurar Nome</label>
+                <input type="text" id="searchName" placeholder="Ex: Maria Silva...">
+            </div>
+            <div class="filter-group">
+                <label>Especialidade (Tag)</label>
+                <input type="text" id="searchTag" placeholder="Ex: Casal, CNV...">
+            </div>
+            <div class="filter-group">
+                <label>Preço</label>
+                <select id="searchPrice">
+                    <option value="">Todos</option>
+                    <option value="1">€ (Económico)</option>
+                    <option value="2">€€ (Intermédio)</option>
+                    <option value="3">€€€ (Premium)</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="therapists-list">
+            <p>A carregar lista de profissionais...</p>
+        </div>
+    </div>
+
+    <script>
+        const PROJECT_ID = "zhr2ddpl";
+        let allTherapists = [];
+
+        // 1. QUERY SANITY (Ajuste o nome do tipo no Sanity se necessário)
+        const QUERY = encodeURIComponent(`*[_type == "therapist"] | order(name asc)`);
+        const URL = `https://${PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/production?query=${QUERY}`;
+
+        async function fetchTherapists() {
+            try {
+                const response = await fetch(URL);
+                const { result } = await response.json();
+                allTherapists = result || [];
+                renderTherapists(allTherapists);
+            } catch (err) {
+                console.error("Erro:", err);
+                document.getElementById('therapists-list').innerHTML = "Erro ao carregar dados.";
+            }
+        }
+
+        function renderTherapists(list) {
+            const container = document.getElementById('therapists-list');
+            container.innerHTML = '';
+
+            if (list.length === 0) {
+                container.innerHTML = "<p>Nenhum terapeuta encontrado com estes critérios.</p>";
+                return;
+            }
+
+            // Agrupar por letra inicial
+            const grouped = list.reduce((acc, t) => {
+                const firstLetter = t.name[0].toUpperCase();
+                if (!acc[firstLetter]) acc[firstLetter] = [];
+                acc[firstLetter].push(t);
+                return acc;
+            }, {});
+
+            // Renderizar cada grupo alfabético
+            Object.keys(grouped).sort().forEach(letter => {
+                const section = document.createElement('div');
+                section.className = 'alphabet-section';
+                
+                let cardsHtml = grouped[letter].map(t => {
+                    const priceSymbol = "€".repeat(t.priceLevel || 1);
+                    const tagsHtml = (t.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('');
+                    const recommendersHtml = (t.recommenders || []).join(', ');
+                    
+                    return `
+                        <div class="therapist-card">
+                            <div>
+                                <h3 class="therapist-name">${t.name}</h3>
+                                <div class="price-tag">${priceSymbol}</div>
+                                <div class="tag-list">${tagsHtml}</div>
+                                <p><strong>📞 Tel:</strong> ${t.phone || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <div class="contact-links">
+                                    ${t.instagram ? `<a href="${t.instagram}" target="_blank">Instagram</a>` : ''}
+                                    ${t.linkedin ? `<a href="${t.linkedin}" target="_blank">LinkedIn</a>` : ''}
+                                </div>
+                                <div class="recommenders">
+                                    <strong>Recomendado por:</strong> ${recommendersHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                section.innerHTML = `
+                    <div class="letter-header">${letter}</div>
+                    <div class="therapist-grid">${cardsHtml}</div>
+                `;
+                container.appendChild(section);
+            });
+        }
+
+        // 2. LÓGICA DE BUSCA E FILTROS
+        function filterResults() {
+            const nameQuery = document.getElementById('searchName').value.toLowerCase();
+            const tagQuery = document.getElementById('searchTag').value.toLowerCase();
+            const priceQuery = document.getElementById('searchPrice').value;
+
+            const filtered = allTherapists.filter(t => {
+                const matchesName = t.name.toLowerCase().includes(nameQuery);
+                const matchesTag = t.tags ? t.tags.some(tag => tag.toLowerCase().includes(tagQuery)) : true;
+                const matchesPrice = priceQuery ? t.priceLevel == priceQuery : true;
+                return matchesName && matchesTag && matchesPrice;
+            });
+
+            renderTherapists(filtered);
+        }
+
+        // Listeners para os filtros
+        document.getElementById('searchName').addEventListener('input', filterResults);
+        document.getElementById('searchTag').addEventListener('input', filterResults);
+        document.getElementById('searchPrice').addEventListener('change', filterResults);
+
+        fetchTherapists();
+    </script>
+</body>
+</html>
